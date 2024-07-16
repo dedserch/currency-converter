@@ -1,11 +1,11 @@
 import axios from 'axios'
 import { ExchangeRates, ICurrencyConverter } from '../types/CurrencyConverter.type'
 
-const API_KEY = process.env.REACT_APP_API_KEY
-const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest`
+const API_KEY = import.meta.env.VITE_API_KEY
+const API_URL = import.meta.env.VITE_API_URL
 
 export const fetchRates = async (baseCurrency: string): Promise<ExchangeRates> => {
-  const response = await axios.get(`${API_URL}/${baseCurrency}`)
+  const response = await axios.get(`${API_URL}/${API_KEY}/latest/${baseCurrency}`)
   return response.data.conversion_rates
 }
 
