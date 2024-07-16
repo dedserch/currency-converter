@@ -1,11 +1,20 @@
-import axios from "axios";
+import axios from 'axios'
+import { ExchangeRates, ICurrencyConverter } from '../types/CurrencyConverter.type'
 
+const API_KEY = process.env.REACT_APP_API_KEY
+const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest`
 
-export class CurrencyConverterService {
-    private static API_KEY = process.env.REACT_APP_API_KEY
-    
-    public static async getExchangeRates(){
-        const response = await axios.get(`https://api.fastforex.io/fetch-all?api_key=${this.API_KEY}`)
-        return response.data.results;
-    }
+export const fetchRates = async (baseCurrency: string): Promise<ExchangeRates> => {
+  const response = await axios.get(`${API_URL}/${baseCurrency}`)
+  return response.data.conversion_rates
+}
+
+export const convertCurrency = (converter: ICurrencyConverter): number => {
+  const { amount, fromCurrency, toCurrency, exchangeRates } = converter
+  if (!exchangeRates[toCurrency]) {
+    throw new Error(`Обменный курс для ${toCurrency} недоступен.`)
+  }
+  const fromRate = exchangeRates[fromCurrency]
+  const toRate = exchangeRates[toCurrency]
+  return (amount / fromRate) * toRate
 }
